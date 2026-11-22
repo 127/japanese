@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Собрать !_kanji_all_text.pdf — таблицы иероглифов, набранные шрифтом (не скан).
 
-Данные: kanji_table.py рядом (перепечатаны со сканов _scans/kanji001, 002, 004).
+Данные: kanji_table.py рядом (перепечатаны со сканов kanji001/002/004).
 Вид строки, как в учебнике: иероглиф | он над чертой, кун под чертой |
 значение | ключ | № ключа. Один лист A4: слева уроки 4 и 5, справа урок 6.
 Поля 8 pt, на странице нет заголовков — экономим чернила и бумагу.
@@ -24,14 +24,14 @@ body{font-family:"DejaVu Sans","Helvetica Neue",Arial,sans-serif;font-size:8.5pt
 .page{box-sizing:border-box;width:210mm;height:296.5mm;padding:8pt;display:flex;gap:10pt}
 .col{flex:1;display:flex;flex-direction:column}
 .gap{flex:0 0 7pt}
-.row{flex:1 1 0;display:grid;grid-template-columns:30pt 76pt 1fr 40pt 20pt;align-items:center;
-     column-gap:5pt;border-bottom:0.3pt solid #bbb;min-height:0}
+.row{flex:1 1 0;display:grid;grid-template-columns:28pt 88pt 1fr 34pt 20pt;align-items:center;
+     column-gap:4pt;border-bottom:0.3pt solid #bbb;min-height:0}
 .row.first{border-top:0.3pt solid #bbb}
 .jp{font-family:"Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho","Noto Sans CJK JP",serif}
 .k{font-size:21pt;line-height:1;text-align:center}
-.r{font-size:8.5pt;text-align:center;line-height:1.25}
+.r{font-size:11.5pt;text-align:center;line-height:1.12;font-family:"Noto Sans CJK JP","Hiragino Sans","Yu Gothic",sans-serif}
 .r .on{display:block;border-bottom:0.5pt solid #000;padding-bottom:0.5pt;margin:0 4pt}
-.r .kun{display:block;padding-top:0.5pt;min-height:8pt}
+.r .kun{display:block;padding-top:0.5pt;min-height:11pt}
 .m{line-height:1.2}
 .m.two span{display:block}
 .key{font-size:12pt;text-align:center;white-space:nowrap}
