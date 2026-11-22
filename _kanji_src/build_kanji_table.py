@@ -6,6 +6,8 @@
 Вид строки, как в учебнике: иероглиф | он над чертой, кун под чертой |
 значение | ключ | № ключа. Один лист A4: слева уроки 4 и 5, справа урок 6.
 Поля 8 pt, на странице нет заголовков — экономим чернила и бумагу.
+Если чтение или значение не помещается в свою строку, шрифт уменьшается
+только в этой ячейке (см. page.evaluate ниже); остальные остаются крупными.
 
 Запуск (из корня репозитория):
     python3 _kanji_src/build_kanji_table.py            # пишет !_kanji_all_text.pdf
@@ -30,6 +32,8 @@ body{font-family:"DejaVu Sans","Helvetica Neue",Arial,sans-serif;font-size:8.5pt
 .jp{font-family:"Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho","Noto Sans CJK JP",serif}
 .k{font-size:21pt;line-height:1;text-align:center}
 .r{font-size:11.5pt;text-align:center;line-height:1.12;font-family:"Noto Sans CJK JP","Hiragino Sans","Yu Gothic",sans-serif}
+.r span{white-space:nowrap}
+.r,.m{min-width:0}
 .r .on{display:block;border-bottom:0.5pt solid #000;padding-bottom:0.5pt;margin:0 4pt}
 .r .kun{display:block;padding-top:0.5pt;min-height:11pt}
 .m{line-height:1.2}
@@ -37,6 +41,23 @@ body{font-family:"DejaVu Sans","Helvetica Neue",Arial,sans-serif;font-size:8.5pt
 .key{font-size:12pt;text-align:center;white-space:nowrap}
 .n{text-align:right;padding-right:2pt}
 """
+
+# Подгонка: уменьшает шрифт только в тех ячейках (чтение или значение), которые
+# не помещаются по ширине (и по высоте строки, если checkHeight). Используется и в _voc_src.
+FIT_JS = """(checkHeight) => {
+          const textWidth = el => { const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect().width; };
+          for (const row of document.querySelectorAll('.row')) {
+            const h = row.clientHeight - 2;
+            for (const el of row.querySelectorAll('.r, .m')) {
+              const tooWide = () => el.classList.contains('r') &&
+                [...el.children].some(sp => textWidth(sp) > el.clientWidth - 8);
+              let size = parseFloat(getComputedStyle(el).fontSize);
+              while (((checkHeight && el.scrollHeight > h) || tooWide()) && size > 5) {
+                size -= 0.25; el.style.fontSize = size + 'px';
+              }
+            }
+          }
+        }"""
 
 def row(r, first):
     k, on, kun, m1, m2, key, no = r
@@ -60,6 +81,9 @@ def build(out):
     with sync_playwright() as pw:
         b = pw.chromium.launch(); page = b.new_page()
         page.set_content(doc)
+        # Выборочно уменьшить шрифт только там, где чтение или значение не помещается
+        # в свою строку (налезает на соседнюю) — остальные ячейки остаются крупными.
+        page.evaluate(FIT_JS, True)
         page.pdf(path=out, format="A4", print_background=True, page_ranges="1",
                  margin={"top": "0", "bottom": "0", "left": "0", "right": "0"})
         b.close()

@@ -69,6 +69,7 @@ def build(out):
     with sync_playwright() as pw:
         b = pw.chromium.launch(); page = b.new_page()
         page.set_content(doc)
+        page.evaluate(kt.FIT_JS, False)      # ужать только те чтения, что шире своей ячейки
         page.pdf(path=out, format="A4", print_background=True, prefer_css_page_size=True)
         b.close()
     print(out, "блоков:", len(BLOCKS))
